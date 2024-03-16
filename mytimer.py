@@ -1,144 +1,60 @@
-import tkinter as tk
-import tkinter.ttk as ttk
+from customtkinter import *
 import time
 import datetime as dt
 
 
-class Timer():
+class Stopwatch():
     def __init__(self):
         self.button_clicked = True
         self.is_dark_mode = False
         self.start = time.time()
         self.finish = time.time()
+        self.modes = ['Light', 'Dark']
         #window
-        self.root = tk.Tk()
-        self.root.configure()
-        self.root.title('Time Shower')
-        self.root.geometry('300x300')
-        self.root.iconbitmap(True, 'E:\PythonProjects\PYTHON\pylogo.ico')
+        self.root = CTk()
+        self.root.resizable(False, False)
+        self.root.title('Stopwatch')
+        self.root.geometry('419x400')
+        set_appearance_mode('light')
 
         #frame for clock
-        self.frame_for_clock = tk.LabelFrame(self.root, text='Actual time')
-        self.frame_for_clock.grid(row=0, rowspan=1, columnspan=4)
+        self.frame_for_clock = CTkFrame(self.root)
+        self.frame_for_clock.grid(row=0, rowspan=1, columnspan=20)
 
         #frame for buttons
-
-        self.frame_for_buttons = tk.LabelFrame(self.root, text='Buttons to control the timer', width=300)
+        self.frame_for_buttons = CTkFrame(self.root, width=300)
         self.frame_for_buttons.grid(row=1, rowspan=1, columnspan=4)
 
         #frame for a timer
-        self.frame_for_timer = tk.Frame(self.root)
+        self.frame_for_timer = CTkFrame(self.root)
         self.frame_for_timer.grid(row=2, rowspan=1)
 
         #label for clock
-        self.lbl_actual_time = tk.Label(self.frame_for_clock, padx=2, pady=2)
-        self.lbl_actual_time.grid(row=1)
+        self.lbl_actual_time = CTkLabel(self.frame_for_clock)
+        self.lbl_actual_time.grid(row=0, column=0, padx=7)
         self.update_clock()
 
+        #Dropdown list to change theme mode
+        self.cmb = CTkComboBox(self.frame_for_clock, values=self.modes, command=self.choose, justify=CENTER)
+        self.cmb.grid(row=0, column=4, padx=212)
+
         #button to start the timer
-        self.btn_start = ttk.Button(self.frame_for_buttons, text='Start', command=self.start_timer)
-        self.btn_start.grid(row=0, column=0)
+        self.btn_start = CTkButton(self.frame_for_buttons, text='Start', command=self.start_timer)
+        self.btn_start.grid(row=0, column=0, padx=7)
         
         #button to stop the timer
-        self.btn_stop = ttk.Button(self.frame_for_buttons, text='Stop', command=self.stop_the_clock)
+        self.btn_stop = CTkButton(self.frame_for_buttons, text='Stop', command=self.stop_the_clock)
         self.btn_stop.grid(row=0, column=1)
 
-        #button which changes the theme of the app
-        self.btn_change_theme = ttk.Button(self.frame_for_buttons, text='Change theme', command=self.change_theme)
-        self.btn_change_theme.grid(row=0, column=2)
-
         #label showing a timer
-        self.lbl_timer = tk.Label(self.frame_for_timer, text='0.0')
+        self.lbl_timer = CTkLabel(self.frame_for_timer, text='0.0')
         self.lbl_timer.grid(row=2)
 
-        #frame for points in timer
-        self.frame_for_points = tk.LabelFrame(self.root, text='Points')
-        self.frame_for_points.grid(row=3)
-
-        #button which creates points in timer
-        # self.button_for_points
-
-        self.cfgs_for_white_theme = {'bg': 'white', 'fg': 'black'}
-        
-        self.cfgs_for_black_theme = {'bg': 'black', 'fg': 'white'}
         
         self.root.mainloop()
 
-    def change_theme(self):
-        if self.is_dark_mode:
-            self.change_to_white(self.cfgs_for_white_theme)
-        else:
-            self.change_to_black(self.cfgs_for_black_theme)
-
-        self.is_dark_mode = not self.is_dark_mode
-
-    def change_to_white(self, theme: dict):
-        self.root.configure(bg=theme['bg'])
-
-        style = ttk.Style()
-        style.theme_use('default')
-
-        style.map('Mod.TButton',
-                  background = [("active", "white"), ("!active", "white")],
-                  foreground = [('active', 'black'), ("!active", "black")])
-
-        for widget in self.root.winfo_children():
-            widget_type = widget.winfo_class()
-
-            if widget_type == 'Labelframe':
-                widget.configure(bg=theme['bg'], fg=theme['fg'])
-                
-                for widget_2 in widget.winfo_children():
-                    widget_type_lblfrms = widget_2.winfo_class()
-
-                    if widget_type_lblfrms == 'TButton':
-                        widget_2.configure(style='Mod.TButton')
-                    elif widget_type_lblfrms == 'Label':
-                        widget_2.configure(bg=theme['bg'], fg=theme['fg'])
-            elif widget_type == 'Frame':
-                widget.configure(bg=theme['bg'])
-                
-                for widget_2 in widget.winfo_children():
-                    widget_type_frms = widget_2.winfo_class()
-                    
-                    if widget_type_frms == 'TButton':
-                        widget_2.configure(style='Mod.TButton')
-                    elif widget_type_frms == 'Label':
-                        widget_2.configure(bg=theme['bg'], fg=theme['fg'])
-        
-    def change_to_black(self, theme: dict):
-        self.root.configure(bg=theme['bg'])
-
-        style = ttk.Style()
-        style.theme_use('default')
-
-        style.map('Mod.TButton',
-                  background = [("active", "black"), ("!active", "black")],
-                  foreground = [('active', 'white'), ("!active", "white")])
-        
-        for widget in self.root.winfo_children():
-            widget_type = widget.winfo_class()
-
-            if widget_type == 'Labelframe':
-                widget.configure(bg=theme['bg'], fg=theme['fg'])
-                
-                for widget_2 in widget.winfo_children():
-                    widget_type_lblfrms = widget_2.winfo_class()
-
-                    if widget_type_lblfrms == 'TButton':
-                        widget_2.configure(style='Mod.TButton')
-                    elif widget_type_lblfrms == 'Label':
-                        widget_2.configure(bg=theme['bg'], fg=theme['fg'])
-            elif widget_type == 'Frame':
-                widget.configure(bg=theme['bg'])
-                
-                for widget_2 in widget.winfo_children():
-                    widget_type_frms = widget_2.winfo_class()
-                    
-                    if widget_type_frms == 'TButton':
-                        widget_2.configure(style='Mod.TButton')
-                    elif widget_type_frms == 'Label':
-                        widget_2.configure(bg=theme['bg'], fg=theme['fg'])
+    def choose(self, choice):
+        set_appearance_mode(choice)
 
     def start_timer(self):
         self.btn_start.configure(state='disabled')
@@ -174,4 +90,4 @@ class Timer():
         self.btn_start.configure(state='normal')
 
 if __name__ == '__main__':
-    print('Hello')
+    app = Stopwatch()
